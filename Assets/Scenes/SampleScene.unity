@@ -1298,7 +1298,7 @@ LightingSettings:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   serializedVersion: 3
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_EnableBakedLightmaps: 1
   m_EnableRealtimeLightmaps: 0
   m_RealtimeEnvironmentLighting: 1
@@ -5373,6 +5373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5aea70f2abc94132887de1f479bcb09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minimumY: -10
   acceleration: 30
   deceleration: 10
   maxSpeed: 15
