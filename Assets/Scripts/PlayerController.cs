@@ -183,7 +183,7 @@ public class PlayerController : MonoBehaviour
                     wallrunNormal * wallrunNormalForce, ForceMode.Impulse);
             }
         }
-        if(y < minimumY)
+        if(transform.position.y < minimumY)
         {
             Die();
         }
