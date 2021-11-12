@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class PlayerController : MonoBehaviour
         Slide,
         Wallrun
     }
+
+    public float minimumY = -10f;
 
     public float acceleration;
     public float deceleration;
@@ -180,5 +183,14 @@ public class PlayerController : MonoBehaviour
                     wallrunNormal * wallrunNormalForce, ForceMode.Impulse);
             }
         }
+        if(y < minimumY)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
