@@ -951,4 +951,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 124bbc9086c264b4282bbf666040be50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impulseThreshold: 0
+  impulseThreshold: 5

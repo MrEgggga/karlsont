@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
         {
             if(collision.gameObject.TryGetComponent(out Rigidbody rb))
             {
-                rb.AddForce(-collision.impulse, ForceMode.Impulse);
+                rb.AddForce(-collision.impulse + (collision.impulse.normalized * impulseThreshold), ForceMode.Impulse);
             }
             Destroy(gameObject);
         }
