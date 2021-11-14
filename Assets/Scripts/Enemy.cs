@@ -16,7 +16,11 @@ public class Enemy : MonoBehaviour
             if(collision.gameObject.TryGetComponent(out Rigidbody rb))
             {
                 rb.AddForce(-collision.impulse + (collision.impulse.normalized * impulseThreshold), ForceMode.Impulse);
-                rb.AddForce(Vector3.up * upwardImpulse, ForceMode.Impulse);
+                rb.AddForce(Vector3.up * (upwardImpulse + collision.impulse.y), ForceMode.Impulse);
+            }
+            if(collision.gameObject.TryGetComponent(out PlayerController p))
+            {
+                p.gun.Restock();
             }
             Instantiate(explosion, transform.position, Quaternion.identity);
             Destroy(gameObject);

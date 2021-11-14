@@ -24,10 +24,14 @@ public class Gun : MonoBehaviour
     private int ammoLeft;
     private float shootTimer;
 
+    public LayerMask grappleLayerMask;
+    public float grappleAimAssist;
     public float grappleForce;
     public float grappleNormalResistance;
     private bool grappling;
     private Vector3 grapplePoint;
+    private Collider grapplingTo;
+    public LineRenderer rope;
 
     public PlayerInput input;
     private InputAction fire;
@@ -102,22 +106,40 @@ public class Gun : MonoBehaviour
             if(!grappling)
             {
                 // Check for grapplable object (currently just enemies)
-                if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, layerMask))
+                if(Physics.SphereCast(transform.position, grappleAimAssist, transform.forward, out RaycastHit hit, layerMask))
                 {
                     if(hit.collider.gameObject.GetComponent<Enemy>())
                     {
                         grappling = true;
+                        grapplingTo = hit.collider;
                         grapplePoint = hit.point;
                     }
                 }
             }
             if(grappling)
             {
+                if(grapplingTo == null)
+                {
+                    grappling = false;
+                    return;
+                }
+
+                rope.gameObject.SetActive(true);
+                rope.SetPosition(0, transform.position + transform.forward * 0.35f);
+                rope.SetPosition(1, grapplePoint);
+
+                // Vector we're grappling in
                 Vector3 dir = (grapplePoint - transform.position).normalized;
+                // Resist forces orthogonal to the grapple direction
                 rb.AddForce(-Vector3.ProjectOnPlane(rb.velocity, dir) * grappleNormalResistance, ForceMode.Force);
                 // Add a force towards the grapple point
                 rb.AddForce(dir * grappleForce, ForceMode.Force);
             }
+        }
+        else
+        {
+            rope.gameObject.SetActive(false);
+            grappling = false;
         }
     }
 
