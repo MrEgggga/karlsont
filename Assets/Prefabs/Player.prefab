@@ -101,7 +101,7 @@ MonoBehaviour:
   impulse: 15
   ammo: 2
   pellets: 15
-  spread: 30
+  spread: 20
   bullet: {fileID: 1150264612379938344, guid: 22154f6dee9984c6894c4f7a80e4d438, type: 3}
   ammoIndicators:
   - {fileID: 0}
