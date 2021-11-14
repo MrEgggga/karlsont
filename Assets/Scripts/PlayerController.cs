@@ -80,9 +80,14 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         bool grounded = false;
+        List<Collider> toRemove = new List<Collider>();
         // Update state
         foreach(KeyValuePair<Collider, ContactPoint> contact in contacts)
         {
+            if(contact.Key == null)
+            {
+                toRemove.Add(contact.Key);
+            }
             if(contact.Value.normal.y > 0.7f)
             {
                 // On ground
@@ -106,6 +111,12 @@ public class PlayerController : MonoBehaviour
                 grounded = true;
             }
         }
+
+        foreach(Collider col in toRemove)
+        {
+            contacts.Remove(col);
+        }
+
         if(!grounded) state = State.Air;
 
         // Do things based on state:
