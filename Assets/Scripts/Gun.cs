@@ -24,12 +24,19 @@ public class Gun : MonoBehaviour
     private int ammoLeft;
     private float shootTimer;
 
+    public float grappleForce;
+    public float grappleNormalResistance;
+    private bool grappling;
+    private Vector3 grapplePoint;
+
     public PlayerInput input;
     private InputAction fire;
+    private InputAction grapple;
 
     void Start()
     {
         fire = input.actions.FindAction("Fire");
+        grapple = input.actions.FindAction("Grapple");
     }
 
     // Update is called once per frame
@@ -84,6 +91,33 @@ public class Gun : MonoBehaviour
         else
         {
             shootTimer -= Time.deltaTime;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if(grapple.ReadValue<float>() > 0.9f)
+        {
+            Debug.Log("Grappling");
+            if(!grappling)
+            {
+                // Check for grapplable object (currently just enemies)
+                if(Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, layerMask))
+                {
+                    if(hit.collider.gameObject.GetComponent<Enemy>())
+                    {
+                        grappling = true;
+                        grapplePoint = hit.point;
+                    }
+                }
+            }
+            if(grappling)
+            {
+                Vector3 dir = (grapplePoint - transform.position).normalized;
+                rb.AddForce(-Vector3.ProjectOnPlane(rb.velocity, dir) * grappleNormalResistance, ForceMode.Force);
+                // Add a force towards the grapple point
+                rb.AddForce(dir * grappleForce, ForceMode.Force);
+            }
         }
     }
 
