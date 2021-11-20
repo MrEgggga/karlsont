@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
             if(collision.gameObject.TryGetComponent(out Rigidbody rb))
             {
                 rb.AddForce(-collision.impulse + (collision.impulse.normalized * impulseThreshold), ForceMode.Impulse);
-                rb.AddForce(Vector3.up * (upwardImpulse + collision.impulse.y), ForceMode.Impulse);
+                rb.AddForce(Vector3.up * (upwardImpulse + (collision.impulse.y > 0 ? collision.impulse.y : 0)), ForceMode.Impulse);
             }
             if(collision.gameObject.TryGetComponent(out PlayerController p))
             {

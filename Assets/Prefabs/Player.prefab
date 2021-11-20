@@ -113,9 +113,9 @@ MonoBehaviour:
   grappleLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  grappleAimAssist: 5
+  grappleAimAssist: 15
   grappleForce: 50
-  grappleNormalResistance: 10
+  grappleNormalResistance: 3
   rope: {fileID: 853313659209466957}
   input: {fileID: 5199736991010219728}
 --- !u!1 &5199736989333224792
@@ -5412,7 +5412,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.5
         inSlope: 0
         outSlope: 0
         tangentMode: 0

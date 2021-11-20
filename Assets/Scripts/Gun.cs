@@ -36,11 +36,13 @@ public class Gun : MonoBehaviour
     public PlayerInput input;
     private InputAction fire;
     private InputAction grapple;
+    private InputAction slide;
 
     void Start()
     {
         fire = input.actions.FindAction("Fire");
         grapple = input.actions.FindAction("Grapple");
+        slide = input.actions.FindAction("Slide");
     }
 
     // Update is called once per frame
@@ -85,7 +87,12 @@ public class Gun : MonoBehaviour
                     }
                 }
 
-                rb.AddForce(transform.forward * impulse * -1, ForceMode.Impulse);
+                Vector3 velocityAlongShootDir = Vector3.Project(rb.velocity, transform.forward);
+                float maxImpulse = slide.ReadValue<float>() > 0.9f ? 
+                    impulse :
+                    Mathf.Max(impulse, ((-transform.forward * impulse) - velocityAlongShootDir).magnitude);
+
+                rb.AddForce(-transform.forward * maxImpulse, ForceMode.Impulse);
                 ps.Play();
 
                 shootTimer = cooldown;
@@ -105,14 +112,24 @@ public class Gun : MonoBehaviour
             Debug.Log("Grappling");
             if(!grappling)
             {
-                // Check for grapplable object (currently just enemies)
-                if(Physics.SphereCast(transform.position, grappleAimAssist, transform.forward, out RaycastHit hit, layerMask))
+                // Increase radius of sphere cast, up to grappleAimAssist
+                // thus, if we are pointing directly at a target but
+                // there is a closer target within the grappleAimAssist
+                // radius, we will grapple to the far-away object; however
+                // if we are not we will have aim assist
+                // This allows for larger maximum aim assist without things
+                // getting in the way
+                for(float r = 0f; r < grappleAimAssist; r += 1f)
                 {
-                    if(hit.collider.gameObject.GetComponent<Enemy>())
+                    if(Physics.SphereCast(transform.position, r, transform.forward, out RaycastHit hit, layerMask))
                     {
-                        grappling = true;
-                        grapplingTo = hit.collider;
-                        grapplePoint = hit.point;
+                        if(hit.collider.gameObject.GetComponent<Enemy>())
+                        {
+                            grappling = true;
+                            grapplingTo = hit.collider;
+                            grapplePoint = hit.point;
+                            break;
+                        }
                     }
                 }
             }
@@ -124,16 +141,17 @@ public class Gun : MonoBehaviour
                     return;
                 }
 
-                rope.gameObject.SetActive(true);
-                rope.SetPosition(0, transform.position + transform.forward * 0.35f);
-                rope.SetPosition(1, grapplePoint);
-
                 // Vector we're grappling in
                 Vector3 dir = (grapplePoint - transform.position).normalized;
                 // Resist forces orthogonal to the grapple direction
                 rb.AddForce(-Vector3.ProjectOnPlane(rb.velocity, dir) * grappleNormalResistance, ForceMode.Force);
                 // Add a force towards the grapple point
                 rb.AddForce(dir * grappleForce, ForceMode.Force);
+
+                // Render the rope
+                rope.gameObject.SetActive(true);
+                rope.SetPosition(0, transform.position + transform.forward * 0.35f);
+                rope.SetPosition(1, grapplePoint);
             }
         }
         else
