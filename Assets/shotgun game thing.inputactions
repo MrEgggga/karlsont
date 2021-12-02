@@ -46,14 +46,6 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Sensitivity",
-                    "type": "Value",
-                    "id": "e060011f-ccf8-43d2-a0ea-760dc9cd8904",
-                    "expectedControlType": "Axis",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
                     "name": "Grapple",
                     "type": "Button",
                     "id": "5a0cc95c-ef20-46d5-ba9e-d000355139e5",
@@ -65,6 +57,14 @@
                     "name": "Restart",
                     "type": "Button",
                     "id": "7e6ac5d3-16cf-4eb8-b9b7-e4f894530ecb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "71433bde-835b-4ead-a4cf-afeff12487b8",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -208,7 +208,7 @@
                     "id": "c1f7a91b-d0fd-4a62-997e-7fb9b69bf235",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "ScaleVector2(x=6,y=6)",
                     "groups": ";Gamepad",
                     "action": "Look",
                     "isComposite": false,
@@ -336,39 +336,6 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "1D Axis",
-                    "id": "9a001f20-4378-4bbb-9cc5-e5352a5ecacc",
-                    "path": "1DAxis",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Sensitivity",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "negative",
-                    "id": "4d1cce3e-3017-4d3a-9739-7081f575082a",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Sensitivity",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "positive",
-                    "id": "1f61901c-83bb-4e7f-bb21-1c808cd1f9bb",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Sensitivity",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
                     "name": "",
                     "id": "eef387e9-3661-4b82-a62d-2a5cfb1c334c",
                     "path": "<Gamepad>/buttonWest",
@@ -409,6 +376,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Restart",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d189d819-d3a6-448b-b71e-053b7fa8a046",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3238774c-dd68-4310-8c70-fa142f0c60b9",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
