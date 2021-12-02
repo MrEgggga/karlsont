@@ -43,6 +43,8 @@ public class Gun : MonoBehaviour
         fire = input.actions.FindAction("Fire");
         grapple = input.actions.FindAction("Grapple");
         slide = input.actions.FindAction("Slide");
+
+        ammoLeft = ammo;
     }
 
     // Update is called once per frame
