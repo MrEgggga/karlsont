@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class PlayerController : MonoBehaviour
         Air,
         Ground,
         Slide,
-        Wallrun
+        Wallrun,
     }
 
     public float minimumY = -10f;
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
     public float jumpForce;
     public float wallrunNormalForce;
     public float wallrunCameraTilt;
+    public float wallrunUpwardForce;
 
     public Collider standingCollider;
     public Collider slidingCollider;
@@ -40,10 +42,36 @@ public class PlayerController : MonoBehaviour
     private InputAction jump;
     private InputAction restart;
 
+    public AudioSource jumpSound;
+    public AudioSource slideSound;
+
+    public TextMeshProUGUI speedText;
+    private bool previouslyStanding;
+
     private Dictionary<Collider, ContactPoint> contacts;
+
+    public GameObject clipParticles;
 
     void OnCollisionEnter(Collision collision)
     {
+        Vector3 impulse = collision.impulse;
+
+        if(Vector3.Project(impulse, collision.GetContact(0).normal).magnitude > 50f && !collision.gameObject.CompareTag("Noclip"))
+        {
+            Debug.Log("speeeeed!");
+            DisableCollider();
+            Invoke("EnableCollider", 0.1f);
+            rb.AddForce(-impulse + collision.GetContact(0).normal * 50f, ForceMode.Impulse);
+            float yVelocity = rb.velocity.y;
+            rb.AddForce(-Mathf.Max(yVelocity, 0) * Vector3.up, ForceMode.Impulse);
+            Instantiate(clipParticles, transform.position, transform.rotation);
+            gun.Restock();
+        }
+
+        // Is this a wall?
+        ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];
+        collision.GetContacts(contactPoints);
+
         // Add key to dict
         if(!contacts.ContainsKey(collision.collider))
         {
@@ -119,6 +147,22 @@ public class PlayerController : MonoBehaviour
                 grounded = true;
             }
         }
+        if(state != State.Slide)
+        {
+            foreach(KeyValuePair<Collider, ContactPoint> contact in contacts)
+            {
+                Debug.Log("Slope correction attempt");
+                Debug.Log("Normal Y: " + contact.Value.normal.y);
+                // Slope correction
+                if(contact.Value.normal.y > 0.1f && contact.Value.normal.y < 0.99f) {
+                    Debug.Log("Slope correction");
+                    state = State.Air;
+                    Vector3 gravity = Vector3.down * 9.81f;
+                    Vector3 projected = Vector3.ProjectOnPlane(gravity, contact.Value.normal);
+                    rb.AddForce(-projected, ForceMode.Force);
+                }
+            }
+        }
 
         // Remove outdated contacts
         foreach(Collider col in toRemove)
@@ -146,15 +190,23 @@ public class PlayerController : MonoBehaviour
 
         if(state == State.Slide)
         {
+            // if(!slideSound.isPlaying) slideSound.Play();
             standingCollider.enabled = false;
             slidingCollider.enabled = true;
             mouseLook.localPosition = Vector3.down * 0.3f;
         }
         else
         {
+            // slideSound.Stop();
             standingCollider.enabled = true;
             slidingCollider.enabled = false;
             mouseLook.localPosition = Vector3.up * 0.3f;
+        }
+
+        // Wallrun--reduce gravity
+        if(state == State.Wallrun)
+        {
+            rb.AddForce(Vector3.up * wallrunUpwardForce, ForceMode.Force);
         }
 
         // Wallrun camera tilt
@@ -203,6 +255,7 @@ public class PlayerController : MonoBehaviour
         {
             if((state == State.Ground || state == State.Slide))
             {
+                // jumpSound.Play();
                 if(rb.velocity.y < 0f) {
                     rb.AddForce(Vector3.up * -rb.velocity.y, ForceMode.Impulse);
                 }
@@ -210,6 +263,7 @@ public class PlayerController : MonoBehaviour
             }
             else if(state == State.Wallrun)
             {
+                // jumpSound.Play();
                 if(rb.velocity.y < 0f) {
                     rb.AddForce(Vector3.up * -rb.velocity.y, ForceMode.Impulse);
                 }
@@ -229,11 +283,27 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
+
+        speedText.text = string.Format("SPD {0:N0}", rb.velocity.magnitude);
+        speedText.color =
+            rb.velocity.magnitude > 50f ?
+            new Color(255, 0, 0) :
+            new Color(255, 255, 255);
     }
 
     // TODO: maybe wait before reloading scene, add death anim, etc.
     public void Die()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    void DisableCollider()
+    {
+        rb.detectCollisions = false;
+    }
+
+    void EnableCollider()
+    {
+        rb.detectCollisions = true;
     }
 }

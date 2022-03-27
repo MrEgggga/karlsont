@@ -359,6 +359,17 @@
                 },
                 {
                     "name": "",
+                    "id": "a539ef4b-8bed-4af3-bb8c-659977cc7194",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grapple",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e1f3cc4b-e260-45b5-843d-557cfebddab9",
                     "path": "<Gamepad>/select",
                     "interactions": "",

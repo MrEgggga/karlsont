@@ -38,6 +38,8 @@ public class Gun : MonoBehaviour
     private InputAction grapple;
     private InputAction slide;
 
+    public AudioSource shotSound;
+
     void Start()
     {
         fire = input.actions.FindAction("Fire");
@@ -67,6 +69,8 @@ public class Gun : MonoBehaviour
             if(fire.ReadValue<float>() > 0.5f && ammoLeft > 0)
             {
                 // shoot
+                // if(shotSound != null) shotSound.Play();
+
                 for(int i = 0; i < pellets; ++i)
                 {
                     float angle = Random.Range(0, Mathf.PI * 2);
@@ -123,9 +127,9 @@ public class Gun : MonoBehaviour
                 // getting in the way
                 for(float r = 0f; r < grappleAimAssist; r += 1f)
                 {
-                    if(Physics.SphereCast(transform.position, r, transform.forward, out RaycastHit hit, layerMask))
+                    if(Physics.SphereCast(transform.position, r, transform.forward, out RaycastHit hit, grappleLayerMask))
                     {
-                        if(hit.collider.gameObject.GetComponent<Enemy>())
+                        if(hit.collider.gameObject.GetComponent<Grapplable>())
                         {
                             grappling = true;
                             grapplingTo = hit.collider;

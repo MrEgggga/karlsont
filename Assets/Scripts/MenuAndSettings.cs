@@ -51,12 +51,14 @@ public class MenuAndSettings : MonoBehaviour
     {
         if(paused)
         {
+            Time.timeScale = 1f;
             pauseMenu.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             paused = false;
         }
         else
         {
+            Time.timeScale = 0f;
             pauseMenu.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             paused = true;
