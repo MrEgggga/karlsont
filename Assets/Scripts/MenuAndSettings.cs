@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class MenuAndSettings : MonoBehaviour
 {
@@ -63,5 +64,9 @@ public class MenuAndSettings : MonoBehaviour
             Cursor.lockState = CursorLockMode.None;
             paused = true;
         }
+    }
+
+    public void LoadScene(int idx) {
+        SceneManager.LoadScene(idx);
     }
 }
