@@ -55,13 +55,12 @@ public class PlayerController : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         Vector3 impulse = collision.impulse;
-
-        if(Vector3.Project(impulse, collision.GetContact(0).normal).magnitude > 50f && !collision.gameObject.CompareTag("Noclip"))
+        if(CheckClip(impulse, collision))
         {
             Debug.Log("speeeeed!");
             DisableCollider();
             Invoke("EnableCollider", 0.1f);
-            rb.AddForce(-impulse + collision.GetContact(0).normal * 50f, ForceMode.Impulse);
+            rb.AddForce(-impulse + (slide.ReadValue<float>() <= 0.5f ? collision.GetContact(0).normal * 50f : Vector3.zero), ForceMode.Impulse);
             float yVelocity = rb.velocity.y;
             rb.AddForce(-Mathf.Max(yVelocity, 0) * Vector3.up, ForceMode.Impulse);
             Instantiate(clipParticles, transform.position, transform.rotation);
@@ -305,5 +304,12 @@ public class PlayerController : MonoBehaviour
     void EnableCollider()
     {
         rb.detectCollisions = true;
+    }
+
+    bool CheckClip(Vector3 impulse, Collision collision)
+    {
+        return
+            Vector3.Project(impulse, collision.GetContact(0).normal).magnitude > 50f && 
+            !collision.gameObject.CompareTag("Noclip");
     }
 }
