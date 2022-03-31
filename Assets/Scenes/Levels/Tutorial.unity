@@ -7103,12 +7103,13 @@ PrefabInstance:
         lava pit in level 2, nobody will notice\n- dejanked the restart option, will
         automatically unpause\n\nHaven't yet been able to figure out why the jank
         happens but it seems to happen on all non-Mac devices regardless of browser,
-        which explains why I didn't catch it before.\n\nThanks for playing <3\n   
-        -jimbo"
+        which explains why I didn't catch it before.\n\nIn other news, some people
+        might help with level design, meaning... level 3 soon? maybe?\n\nThanks for
+        playing <3\n    -jimbo"
       objectReference: {fileID: 0}
     - target: {fileID: 7134561458615245805, guid: 262a45376184b459fb58733221c38820, type: 3}
       propertyPath: m_fontSize
-      value: 4
+      value: 3.55
       objectReference: {fileID: 0}
     - target: {fileID: 7134561458615245805, guid: 262a45376184b459fb58733221c38820, type: 3}
       propertyPath: m_fontAsset
