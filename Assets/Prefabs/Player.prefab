@@ -323,6 +323,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
@@ -5424,7 +5425,7 @@ MonoBehaviour:
   jumpForce: 3.5
   wallrunNormalForce: 3.5
   wallrunCameraTilt: -15
-  wallrunUpwardForce: 4
+  wallrunUpwardForce: 2
   standingCollider: {fileID: 5199736991010219740}
   slidingCollider: {fileID: 5199736991010219733}
   mouseLook: {fileID: 5199736989748133993}

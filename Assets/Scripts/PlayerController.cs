@@ -67,9 +67,17 @@ public class PlayerController : MonoBehaviour
             gun.Restock();
         }
 
-        // Is this a wall?
         ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];
         collision.GetContacts(contactPoints);
+
+        // wallrunning speed boost for momentum into wall
+        Vector3 normal = collision.GetContact(0).normal;
+        if(normal.y * normal.y < 0.04)
+        {
+            Vector3 newVelocity = Vector3.ProjectOnPlane(rb.velocity, normal);
+            Vector3 lostVelocity = collision.impulse;
+            rb.AddForce((newVelocity + Vector3.up * Mathf.Max(2, -newVelocity.y)).normalized  * lostVelocity.magnitude * 0.5f, ForceMode.Impulse);
+        }
 
         // Add key to dict
         if(!contacts.ContainsKey(collision.collider))
