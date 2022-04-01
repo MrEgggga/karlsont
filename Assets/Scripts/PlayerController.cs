@@ -65,6 +65,7 @@ public class PlayerController : MonoBehaviour
             rb.AddForce(-Mathf.Max(yVelocity, 0) * Vector3.up, ForceMode.Impulse);
             Instantiate(clipParticles, transform.position, transform.rotation);
             gun.Restock();
+            return;
         }
 
         ContactPoint[] contactPoints = new ContactPoint[collision.contactCount];

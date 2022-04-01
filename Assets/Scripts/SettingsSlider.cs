@@ -11,4 +11,9 @@ public class SettingsSlider : MonoBehaviour
     {
         settings.SetSetting(settingName, value);
     }
+
+    public void OnValueChangedBool(bool value)
+    {
+        settings.SetSetting(settingName, value ? 1f : 0f);
+    }
 }
