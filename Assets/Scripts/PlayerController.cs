@@ -114,6 +114,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Vector3 groundNormal = Vector3.up;
         bool grounded = false;
         List<Collider> toRemove = new List<Collider>();
         // Update state
@@ -127,12 +128,14 @@ public class PlayerController : MonoBehaviour
                 // Add to to-remove list; since we're iterating
                 // through the list we can't remove it now
                 toRemove.Add(contact.Key);
+                continue;
             }
             // Normal Y is mostly positive so we're on
             // relatively flat ground
             // TODO: fix these magic constants
             if(contact.Value.normal.y > 0.7f)
             {
+                groundNormal = contact.Value.normal;
                 // On ground
                 // Sliding?
                 if(slide.ReadValue<float>() >= 0.9f)
@@ -155,20 +158,18 @@ public class PlayerController : MonoBehaviour
                 grounded = true;
             }
         }
-        if(state != State.Slide)
+        foreach(KeyValuePair<Collider, ContactPoint> contact in contacts)
         {
-            foreach(KeyValuePair<Collider, ContactPoint> contact in contacts)
-            {
-                Debug.Log("Slope correction attempt");
-                Debug.Log("Normal Y: " + contact.Value.normal.y);
-                // Slope correction
-                if(contact.Value.normal.y > 0.1f && contact.Value.normal.y < 0.99f) {
-                    Debug.Log("Slope correction");
-                    state = State.Air;
-                    Vector3 gravity = Vector3.down * 9.81f;
-                    Vector3 projected = Vector3.ProjectOnPlane(gravity, contact.Value.normal);
-                    rb.AddForce(-projected, ForceMode.Force);
-                }
+            Debug.Log("Slope correction attempt");
+            Debug.Log("Normal Y: " + contact.Value.normal.y);
+            // Slope correction
+            if(contact.Value.normal.y > 0.1f && contact.Value.normal.y < 0.99f) {
+                Debug.Log("Slope correction");
+                if(state != State.Slide) state = State.Ground;
+                groundNormal = contact.Value.normal;
+                Vector3 gravity = Vector3.down * 9.81f;
+                Vector3 projected = Vector3.ProjectOnPlane(gravity, contact.Value.normal);
+                rb.AddForce(state == State.Slide ? projected : -projected, ForceMode.Force);
             }
         }
 
@@ -243,14 +244,17 @@ public class PlayerController : MonoBehaviour
         float accelerationMultiplier = state == State.Slide || state == State.Wallrun ? 0f : (state == State.Air ? 0.5f : 1f);
 
         Vector2 movement = move.ReadValue<Vector2>();
-        rb.AddRelativeForce((Vector3.forward * movement.y + Vector3.right * movement.x) * acceleration * accelerationMultiplier, ForceMode.Force);
+        Vector3 movement3d = new Vector3(movement.x, 0, movement.y);
+        Vector3 relativeMovement = transform.TransformDirection(movement3d);
+        Debug.Log(movement3d + " " + relativeMovement);
+        rb.AddForce(Vector3.ProjectOnPlane(relativeMovement, groundNormal) * acceleration * accelerationMultiplier, ForceMode.Force);
 
         // Deceleration if we're not holding a direction or
         // we're going to fast; runs only in ground state
         // TODO: duplicated condition in if
         if(state == State.Ground && movement.magnitude <= 0.2f)
         {
-            rb.AddForce(-rb.velocity * deceleration, ForceMode.Force);
+            rb.AddForce(Vector3.ProjectOnPlane(-rb.velocity, groundNormal) * deceleration, ForceMode.Force);
         }
         else if(state == State.Ground && rb.velocity.magnitude >= maxSpeed)
         {
